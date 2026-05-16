@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  TEAM_MANAGER
+  EMPLOYEE
+}
+
+enum TeamCode {
+  CREATIVE
+  OPERATIONS
+  TECH
+}
+
+enum TaskType {
+  GENERAL
+  TEAM
+  PRIVATE
+}
+
+enum TaskStatus {
+  CREATED
+  ASSIGNED
+  IN_PROGRESS
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  MISSED
+}
+
+enum PenaltyType {
+  MISSED
+  LATE
+  MANUAL
+}
+
+enum NotificationType {
+  TASK_ASSIGNED
+  TASK_DUE_SOON
+  TASK_APPROVED
+  TASK_REJECTED
+  FAULT_ISSUED
+  RANK_CHANGED
+}
+
+enum ActivityType {
+  TASK_CREATED
+  TASK_ASSIGNED
+  TASK_STARTED
+  TASK_SUBMITTED
+  TASK_REVIEWED
+  POINTS_AWARDED
+  PENALTY_ISSUED
+  USER_LOGIN
+  USER_CREATED
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  name          String
+  avatarUrl     String?
+  role          Role     @default(EMPLOYEE)
+  teamId        String?
+  team          Team?    @relation("TeamMembers", fields: [teamId], references: [id])
+  managedTeam   Team?    @relation("TeamManager")
+  points        Int      @default(0)
+  faultCount    Int      @default(0)
+  warningLevel  Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  assignments       TaskAssignment[]
+  createdTasks      Task[]              @relation("TaskCreatedBy")
+  reviewedAssigns   TaskAssignment[]    @relation("AssignmentReviewer")
+  penalties         Penalty[]           @relation("PenaltyUser")
+  issuedPenalties   Penalty[]           @relation("PenaltyIssuer")
+  notifications     Notification[]
+  activityLogs      ActivityLog[]
+}
+
+model Team {
+  id          String   @id @default(cuid())
+  code        TeamCode @unique
+  name        String
+  color       String
+  description String?
+  managerId   String?  @unique
+  manager     User?    @relation("TeamManager", fields: [managerId], references: [id])
+  createdAt   DateTime @default(now())
+
+  members User[] @relation("TeamMembers")
+  tasks   Task[]
+}
+
+model Task {
+  id            String     @id @default(cuid())
+  title         String
+  description   String?
+  type          TaskType
+  teamId        String?
+  team          Team?      @relation(fields: [teamId], references: [id])
+  createdById   String
+  createdBy     User       @relation("TaskCreatedBy", fields: [createdById], references: [id])
+  dueAt         DateTime
+  points        Int        @default(1)
+  proofRequired Boolean    @default(false)
+  status        TaskStatus @default(CREATED)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  assignments TaskAssignment[]
+
+  @@index([teamId, status, dueAt])
+  @@index([type, dueAt])
+}
+
+model TaskAssignment {
+  id             String     @id @default(cuid())
+  taskId         String
+  task           Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status         TaskStatus @default(ASSIGNED)
+  startedAt      DateTime?
+  submittedAt    DateTime?
+  reviewedAt     DateTime?
+  reviewedById   String?
+  reviewedBy     User?      @relation("AssignmentReviewer", fields: [reviewedById], references: [id])
+  proofUrl       String?
+  proofMime      String?
+  proofOriginalName String?
+  reviewNote     String?
+  awardedPoints  Int?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  penalties Penalty[]
+
+  @@unique([taskId, userId])
+  @@index([userId, status])
+  @@index([status])
+}
+
+model Penalty {
+  id                 String          @id @default(cuid())
+  userId             String
+  user               User            @relation("PenaltyUser", fields: [userId], references: [id])
+  type               PenaltyType
+  points             Int
+  reason             String
+  taskAssignmentId   String?
+  taskAssignment     TaskAssignment? @relation(fields: [taskAssignmentId], references: [id])
+  issuedById         String?
+  issuedBy           User?           @relation("PenaltyIssuer", fields: [issuedById], references: [id])
+  createdAt          DateTime        @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  body      String?
+  link      String?
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead, createdAt])
+}
+
+model ActivityLog {
+  id         String       @id @default(cuid())
+  actorId    String?
+  actor      User?        @relation(fields: [actorId], references: [id])
+  type       ActivityType
+  entityType String?
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime     @default(now())
+
+  @@index([createdAt])
+  @@index([actorId, createdAt])
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value Json
+}

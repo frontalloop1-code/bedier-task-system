@@ -1,0 +1,20 @@
+{
+  "name": "bedier-task-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bedier Group Task Tracking & Performance System",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,magenta \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w frontend",
+    "seed": "npm run seed -w backend",
+    "db:reset": "npm run db:reset -w backend",
+    "db:migrate": "npm run db:migrate -w backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

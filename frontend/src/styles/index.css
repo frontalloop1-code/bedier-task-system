@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background:
+      radial-gradient(1200px 700px at 80% -10%, rgba(77, 142, 255, 0.08), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(221, 183, 255, 0.06), transparent 60%),
+      #0b1326;
+    background-attachment: fixed;
+  }
+  .material-symbols {
+    font-family: 'Material Symbols Outlined';
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(23, 31, 51, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .glass-dim {
+    background: rgba(11, 19, 38, 0.65);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 9999px;
+  }
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/60 focus:ring-offset-0;
+  }
+  .label-caps {
+    @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-on-surface-variant;
+  }
+}

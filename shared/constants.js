@@ -1,0 +1,61 @@
+export const ROLE = Object.freeze({
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  TEAM_MANAGER: 'TEAM_MANAGER',
+  EMPLOYEE: 'EMPLOYEE',
+});
+
+export const TEAM_CODE = Object.freeze({
+  CREATIVE: 'CREATIVE',
+  OPERATIONS: 'OPERATIONS',
+  TECH: 'TECH',
+});
+
+export const TASK_TYPE = Object.freeze({
+  GENERAL: 'GENERAL',
+  TEAM: 'TEAM',
+  PRIVATE: 'PRIVATE',
+});
+
+export const TASK_STATUS = Object.freeze({
+  CREATED: 'CREATED',
+  ASSIGNED: 'ASSIGNED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  SUBMITTED: 'SUBMITTED',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  MISSED: 'MISSED',
+});
+
+export const PENALTY_TYPE = Object.freeze({
+  MISSED: 'MISSED',
+  LATE: 'LATE',
+  MANUAL: 'MANUAL',
+});
+
+export const NOTIFICATION_TYPE = Object.freeze({
+  TASK_ASSIGNED: 'TASK_ASSIGNED',
+  TASK_DUE_SOON: 'TASK_DUE_SOON',
+  TASK_APPROVED: 'TASK_APPROVED',
+  TASK_REJECTED: 'TASK_REJECTED',
+  FAULT_ISSUED: 'FAULT_ISSUED',
+  RANK_CHANGED: 'RANK_CHANGED',
+});
+
+export const ACTIVITY_TYPE = Object.freeze({
+  TASK_CREATED: 'TASK_CREATED',
+  TASK_ASSIGNED: 'TASK_ASSIGNED',
+  TASK_STARTED: 'TASK_STARTED',
+  TASK_SUBMITTED: 'TASK_SUBMITTED',
+  TASK_REVIEWED: 'TASK_REVIEWED',
+  POINTS_AWARDED: 'POINTS_AWARDED',
+  PENALTY_ISSUED: 'PENALTY_ISSUED',
+  USER_LOGIN: 'USER_LOGIN',
+  USER_CREATED: 'USER_CREATED',
+});
+
+export const TEAM_META = {
+  CREATIVE: { name: 'Creative', color: '#ddb7ff' },
+  OPERATIONS: { name: 'Operations', color: '#22c55e' },
+  TECH: { name: 'Tech', color: '#ffb95f' },
+};
