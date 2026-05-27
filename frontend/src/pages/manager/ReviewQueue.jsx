@@ -8,6 +8,7 @@ import { Modal } from '../../components/ui/Modal.jsx';
 import { Textarea } from '../../components/ui/Input.jsx';
 import { TaskTypeBadge } from '../../components/ui/Badge.jsx';
 import { Loading, Empty } from '../../components/ui/Empty.jsx';
+import { AuthedProof } from '../../components/domain/AuthedProof.jsx';
 import { fmtDateTime, fmtDueLabel } from '../../lib/format.js';
 import { Link } from 'react-router-dom';
 
@@ -102,26 +103,21 @@ export default function ReviewQueue() {
       <Modal open={!!previewing} onClose={() => setPreviewing(null)} title="Proof preview" size="lg">
         {previewing && (
           <div className="space-y-3">
-            <div className="text-sm text-on-surface-variant">
-              {previewing.task.title} — {previewing.user?.name}
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-on-surface-variant">
+                {previewing.task.title} — {previewing.user?.name}
+              </span>
+              {previewing.proofOriginalName && (
+                <span className="text-xs text-on-surface-variant/70">
+                  {previewing.proofOriginalName}
+                </span>
+              )}
             </div>
-            {previewing.proofMime?.startsWith('image/') ? (
-              <img
-                src={`/api/assignments/${previewing.id}/proof`}
-                className="max-h-[60vh] w-full rounded-md object-contain"
-                alt=""
-              />
-            ) : (
-              <a
-                href={`/api/assignments/${previewing.id}/proof`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary"
-              >
-                <span className="material-symbols text-base">open_in_new</span>
-                Open file
-              </a>
-            )}
+            <AuthedProof
+              assignmentId={previewing.id}
+              mime={previewing.proofMime}
+              originalName={previewing.proofOriginalName}
+            />
           </div>
         )}
       </Modal>

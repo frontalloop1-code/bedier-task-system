@@ -15,8 +15,19 @@ import { Loading } from '../../components/ui/Empty.jsx';
 import { Modal } from '../../components/ui/Modal.jsx';
 import { Textarea } from '../../components/ui/Input.jsx';
 import { SubmitProofModal } from '../../components/domain/SubmitProofModal.jsx';
+import { AuthedProof } from '../../components/domain/AuthedProof.jsx';
 import { fmtDateTime, fmtDueLabel } from '../../lib/format.js';
 import { isPast } from 'date-fns';
+
+// Mirrors backend rule in routes/assignments.js: only the assignee, a manager
+// of the assignee's team, or any super admin may view a proof.
+function canViewProof(viewer, assignment) {
+  if (!viewer || !assignment) return false;
+  if (viewer.role === 'SUPER_ADMIN') return true;
+  if (assignment.userId === viewer.id) return true;
+  if (viewer.role === 'TEAM_MANAGER' && assignment.user?.teamId === viewer.teamId) return true;
+  return false;
+}
 
 export default function TaskDetail() {
   const { id } = useParams();
@@ -27,6 +38,7 @@ export default function TaskDetail() {
   const review = useReviewAssignment();
   const [submitOpen, setSubmitOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(null);
+  const [previewing, setPreviewing] = useState(null);
 
   if (isLoading || !data) return <Loading />;
   const task = data.task;
@@ -135,16 +147,23 @@ export default function TaskDetail() {
                 )}
               </div>
               <StatusPill status={a.status} />
-              {a.proofUrl && (
-                <a
-                  href={`/api/assignments/${a.id}/proof`}
-                  target="_blank"
-                  rel="noreferrer"
+              {a.proofUrl && canViewProof(user, a) && (
+                <button
+                  onClick={() => setPreviewing(a)}
                   className="inline-flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.03] px-2 py-1 text-xs text-primary hover:bg-white/[0.08]"
                 >
                   <span className="material-symbols text-[14px]">visibility</span>
                   View proof
-                </a>
+                </button>
+              )}
+              {a.proofUrl && !canViewProof(user, a) && (
+                <span
+                  title="Only the assignee, the team manager, and admins can view this proof"
+                  className="inline-flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.02] px-2 py-1 text-xs text-on-surface-variant"
+                >
+                  <span className="material-symbols text-[14px]">lock</span>
+                  Private
+                </span>
               )}
               {canReview && a.status === 'SUBMITTED' && (
                 <div className="flex gap-2">
@@ -186,6 +205,33 @@ export default function TaskDetail() {
           toast.success('Rejected · employee notified');
         }}
       />
+
+      <Modal
+        open={!!previewing}
+        onClose={() => setPreviewing(null)}
+        title="Proof preview"
+        size="lg"
+      >
+        {previewing && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-on-surface-variant">
+                {task.title} — {previewing.user?.name}
+              </span>
+              {previewing.proofOriginalName && (
+                <span className="text-xs text-on-surface-variant/70">
+                  {previewing.proofOriginalName}
+                </span>
+              )}
+            </div>
+            <AuthedProof
+              assignmentId={previewing.id}
+              mime={previewing.proofMime}
+              originalName={previewing.proofOriginalName}
+            />
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
