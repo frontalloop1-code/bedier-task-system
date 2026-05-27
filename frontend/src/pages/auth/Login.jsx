@@ -5,14 +5,6 @@ import { useAuth } from '../../auth/AuthContext.jsx';
 import { Input } from '../../components/ui/Input.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 
-const QUICK_ACCOUNTS = [
-  { label: 'Bedier (Super Admin)', email: 'bedier@system.com', password: 'admin7181' },
-  { label: 'Hanan (Super Admin)', email: 'hanan@system.com', password: 'admin123' },
-  { label: 'Braa (Tech Employee)', email: 'braa.mohamed@system.com', password: '12345678' },
-  { label: 'Alaa (Tech Employee)', email: 'alaa.ahmed@system.com', password: '87654321' },
-  { label: 'Safa (Tech Employee)', email: 'safa.naser@system.com', password: '0123456789' },
-];
-
 export default function Login() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
@@ -135,30 +127,6 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="mt-8 rounded-lg border border-white/10 bg-white/[0.03] p-4">
-            <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
-              Demo accounts
-            </div>
-            <div className="space-y-2">
-              {QUICK_ACCOUNTS.map((q) => (
-                <button
-                  key={q.email}
-                  type="button"
-                  onClick={() => {
-                    setEmail(q.email);
-                    setPassword(q.password);
-                  }}
-                  className="flex w-full items-center justify-between rounded-md border border-white/5 bg-white/[0.02] px-3 py-2 text-left text-sm transition hover:border-primary/40 hover:bg-primary/5"
-                >
-                  <div>
-                    <div className="font-medium">{q.label}</div>
-                    <div className="text-[11px] text-on-surface-variant">{q.email}</div>
-                  </div>
-                  <span className="material-symbols text-on-surface-variant">arrow_outward</span>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>

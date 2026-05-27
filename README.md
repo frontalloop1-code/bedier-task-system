@@ -47,7 +47,7 @@ npm run dev
 
 Open http://localhost:5173
 
-### Seeded accounts (also pre-filled on the login screen)
+### Seeded accounts
 
 **Super Admins**
 
@@ -60,7 +60,7 @@ Open http://localhost:5173
 
 | Name | Email | Password |
 |---|---|---|
-| Braa Mohamed | `braa.mohamed@system.com` | `12345678` |
+| Baraa Mohamed | `baraa.mohamed@system.com` | `12345678` |
 | Alaa Ahmed | `alaa.ahmed@system.com` | `87654321` |
 | Safa Naser | `safa.naser@system.com` | `0123456789` |
 

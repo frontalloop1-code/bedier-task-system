@@ -28,8 +28,8 @@ const ADMIN_ACCOUNTS = [
     teamCode: null,
   },
   {
-    name: 'Braa Mohamed',
-    email: 'braa.mohamed@system.com',
+    name: 'Baraa Mohamed',
+    email: 'baraa.mohamed@system.com',
     password: '12345678',
     role: 'EMPLOYEE',
     teamCode: 'TECH',
@@ -126,7 +126,7 @@ async function main() {
   console.log('    bedier@system.com / admin7181');
   console.log('    hanan@system.com / admin123');
   console.log('  Tech Team Employees:');
-  console.log('    braa.mohamed@system.com / 12345678');
+  console.log('    baraa.mohamed@system.com / 12345678');
   console.log('    alaa.ahmed@system.com / 87654321');
   console.log('    safa.naser@system.com / 0123456789');
   console.log('  Promote one Tech employee to Team Leader via /admin/teams.');
