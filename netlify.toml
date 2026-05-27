@@ -1,0 +1,21 @@
+# Netlify build configuration — lives at the REPO ROOT so it is always found
+# regardless of what "Base directory" is set to in the Netlify UI.
+#
+# Required env var (Netlify → Site settings → Environment variables):
+#   VITE_API_BASE_URL  https://bedier-task-system.onrender.com/api
+
+[build]
+  # Run inside the frontend sub-directory; publish the Vite output.
+  command = "cd frontend && npm install && npm run build"
+  publish = "frontend/dist"
+
+# Pin Node 18 (Vite 5 requires >=18; Netlify's default may be older).
+[build.environment]
+  NODE_VERSION = "18"
+
+# SPA routing — every unknown path falls back to index.html so React Router
+# can resolve it client-side.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
