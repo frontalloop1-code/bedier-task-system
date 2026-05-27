@@ -1,0 +1,20 @@
+# Netlify build configuration.
+#
+# Site root is set to `frontend/` in the Netlify UI ("Base directory" = frontend).
+# Build runs from there; publish dir is the Vite build output.
+#
+# Required env var (set in Site settings → Environment variables):
+#   VITE_API_BASE_URL  https://<your-render-backend>.onrender.com/api
+#
+# Without that env var, the deployed frontend can't reach the backend.
+
+[build]
+  command = "npm install && npm run build"
+  publish = "dist"
+
+# SPA routing — every unknown path falls back to index.html so React Router
+# can resolve it client-side.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

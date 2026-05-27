@@ -26,9 +26,18 @@ app.use(
     crossOriginResourcePolicy: { policy: 'cross-origin' },
   }),
 );
+// FRONTEND_ORIGIN can be a single URL or a comma-separated list — useful for
+// allowing local dev (http://localhost:5173) and a deployed frontend
+// (https://*.netlify.app) at the same time.
+const allowedOrigins = env.FRONTEND_ORIGIN.split(',').map((s) => s.trim()).filter(Boolean);
 app.use(
   cors({
-    origin: env.FRONTEND_ORIGIN,
+    origin: (origin, cb) => {
+      // Same-origin / curl / server-to-server requests have no Origin header.
+      if (!origin) return cb(null, true);
+      if (allowedOrigins.includes(origin)) return cb(null, true);
+      return cb(new Error(`CORS: origin ${origin} not allowed`));
+    },
     credentials: true,
   }),
 );

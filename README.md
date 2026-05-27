@@ -219,6 +219,43 @@ before exposing to anyone.
 
 ---
 
+## Deploying to the cloud
+
+The repo is split into two deployable pieces. Easiest free path:
+
+### 1. Backend → Render
+
+1. https://render.com → New → Web Service → connect this GitHub repo
+2. **Root Directory:** `backend`
+3. **Build Command:** `npm install && npx prisma generate && npx prisma migrate deploy`
+4. **Start Command:** `npm start`
+5. **Environment Variables:**
+   - `DATABASE_URL` — your Neon connection string
+   - `JWT_SECRET` — click "Generate" or paste a long random string
+   - `FRONTEND_ORIGIN` — `https://<your-site>.netlify.app,http://localhost:5173` (comma-separated lets you keep local dev working)
+   - `JWT_EXPIRES_IN` — `12h`
+   - `UPLOAD_DIR` — `./uploads`
+   - `MAX_UPLOAD_MB` — `10`
+   - `NODE_ENV` — `production`
+6. Deploy. After it boots, copy the URL (e.g. `https://bedier-task-system-api.onrender.com`).
+7. Seed once via Render's **Shell** tab: `npm run seed`
+
+> Free tier sleeps after 15 min of no traffic — the first request after sleeping takes ~30 s. Uploaded proof files are **ephemeral** (lost on restart). For persistence, attach a Render Disk or swap multer for Cloudinary.
+
+### 2. Frontend → Netlify
+
+1. https://netlify.com → Add new site → from Git → pick the same repo
+2. **Base directory:** `frontend`
+3. **Build command:** `npm install && npm run build`
+4. **Publish directory:** `frontend/dist`
+5. **Environment variables:**
+   - `VITE_API_BASE_URL` = `https://<your-render-backend>.onrender.com/api`
+6. Deploy. After the first build, hit your site and sign in.
+
+The included [frontend/netlify.toml](frontend/netlify.toml) sets the build and the SPA redirect rule. The [backend/render.yaml](backend/render.yaml) doubles as a Render Blueprint if you'd rather one-click deploy.
+
+---
+
 ## Out of scope for this MVP
 
 (Per SRS sections 14–26, deferred to follow-up iterations.)

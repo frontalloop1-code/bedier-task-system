@@ -8,9 +8,19 @@ export const tokenStore = {
   clear: () => localStorage.removeItem(TOKEN_KEY),
 };
 
-export const api = axios.create({
-  baseURL: '/api',
-});
+// In dev: Vite proxies /api → http://localhost:4000.
+// In production: set VITE_API_BASE_URL=https://<your-backend-host>/api in your
+// Netlify environment variables and rebuild. Falls back to relative /api so
+// local dev still works without any env vars.
+const baseURL = import.meta.env.VITE_API_BASE_URL || '/api';
+
+export const api = axios.create({ baseURL });
+
+export const uploadsBase =
+  import.meta.env.VITE_UPLOADS_BASE_URL ||
+  (import.meta.env.VITE_API_BASE_URL
+    ? import.meta.env.VITE_API_BASE_URL.replace(/\/api\/?$/, '/uploads')
+    : '/uploads');
 
 api.interceptors.request.use((config) => {
   const t = tokenStore.get();
